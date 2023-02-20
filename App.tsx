@@ -11,6 +11,7 @@ import TaskContext,{Task} from './src/DBScheme';
 import type {PropsWithChildren} from 'react';
 import {
   Button,
+  FlatList,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -27,40 +28,33 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import TaskItem from './src/TaskItem';
+import MainScreen from './src/MainScreen';
 
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   const {RealmProvider} = TaskContext;
-  const {useRealm, useQuery, useObject} = TaskContext;
-  const realm = useRealm()
+  // const {useRealm, useQuery, useObject} = TaskContext;
+  // const realm = useRealm()
+  // const tasks = useQuery(Task);
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  //Add task to realm 
-  const handleOnPress = useCallback((description:string):void => {
-    if(!description){
-      return
-    }
-    realm.write(()=>{
-      realm.create('Task',Task.generate(description))
-    })
-  },[realm])
-
-  
-  
   return (
-    <RealmProvider>
+<RealmProvider>
 <SafeAreaView style={backgroundStyle}>
-      <StatusBar
+<StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-      <Button title='Add Task' onPress={()=>handleOnPress("dummy string")}></Button>
+    <MainScreen/>
     </SafeAreaView>
-    </RealmProvider>
+
+</RealmProvider>    
+    
     
   );
 }
