@@ -1,19 +1,12 @@
-import { Button,
-    FlatList,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    useColorScheme,
-    View, useCallback} from "react-native"
-    import TaskContext,{Task} from './DBScheme';
-    import TaskItem from "./TaskItem";
-let realm
-function MainScreen(){
+import {Button, FlatList, View} from 'react-native';
+import React from 'react';
+import TaskContext, {Task} from './DBScheme';
+import TaskItem from './TaskItem';
+import RealmPlugin from 'realm-flipper-plugin-device';
 
-  const {useRealm, useQuery, useObject} = TaskContext;
-  realm = useRealm()
+function MainScreen() {
+  const {useRealm, useQuery, RealmProvider} = TaskContext;
+  let realm = useRealm();
   const tasks = useQuery(Task);
 
   //Add task to realm 
@@ -46,23 +39,29 @@ const deleteData = () =>{
 
 //Added function to clear the db 
 
-    return (  
-    <View style={{height:100,width:100}}>
-    <Button title='Add Task' onPress={()=>handleOnPress("dummy string")}></Button>
-    <Button  title="Clear Data" onPress={()=>deleteData()}></Button>
-    <FlatList
-    style={{height:1000,width:500,backgroundColor:'red'}}
-      data={tasks}
-      keyExtractor={task => task._id.toString()}
-      renderItem={({item}) => (
-        <TaskItem
-          description={item.description}
-          isComplete={item.isComplete}
-          
+  return (
+    <RealmProvider>
+      <RealmPlugin realms={[realm]} />
+      <View style={{height: 100, width: 100}}>
+        <Button
+          title="Add Task"
+          onPress={() => handleOnPress('dummy string')}
         />
-      )}
-    />
-  </View>)
+        <Button title="Clear Data" onPress={() => deleteData()} />
+        <FlatList
+          style={{height: 1000, width: 500, backgroundColor: 'red'}}
+          data={tasks}
+          keyExtractor={task => task._id.toString()}
+          renderItem={({item}) => (
+            <TaskItem
+              description={item.description}
+              isComplete={item.isComplete}
+            />
+          )}
+        />
+      </View>
+    </RealmProvider>
+  );
 }
 
-export default MainScreen
+export default MainScreen;
